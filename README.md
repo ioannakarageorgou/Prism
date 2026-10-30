@@ -8,7 +8,7 @@ a burst. Turn on symmetry and things get unexpectedly pretty.
 
 ## Demo
 
-![Demo](https://github.com/user-attachments/assets/caeebf54-67f5-4b52-915b-8c46bc95f3a8)
+<img src="https://github.com/user-attachments/assets/caeebf54-67f5-4b52-915b-8c46bc95f3a8" width="320" />
 
 ---
 
