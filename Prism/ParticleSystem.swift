@@ -10,20 +10,20 @@ import SwiftUI
 struct ParticleSystem {
     private(set) var particles: [Particle] = []
 
-    private let maxParticles = 1000
+    private let maxParticles = 1500
     var palette: Palette = .neon
 
     // A few slow particles drifting away from the finger
     mutating func emitTrail(at point: CGPoint, time: TimeInterval) {
-        for _ in 0..<3 {
+        for _ in 0..<5 {
             particles.append(Particle(
                 startPosition: point,
-                velocity: CGVector(dx: .random(in: -30...30), dy: .random(in: -30...30)),
+                velocity: CGVector(dx: .random(in: -20...20), dy: .random(in: -20...20)),
                 birthTime: time,
-                lifetime: .random(in: 0.8...1.6),
-                radius: .random(in: 2...5),
+                lifetime: .random(in: 1.2...2.2),
+                radius: .random(in: 3...6),
                 color: palette.colors.randomElement() ?? .white,
-                gravity: 40
+                gravity: 20
             ))
         }
         removeExpired(at: time)
@@ -31,22 +31,23 @@ struct ParticleSystem {
 
     // Particles flying outward in every direction
     mutating func burst(at point: CGPoint, time: TimeInterval) {
-        for _ in 0..<40 {
+        for _ in 0..<80 {
             let angle = Double.random(in: 0..<2 * .pi)
-            let speed = Double.random(in: 60...260)
+            let speed = Double.random(in: 100...400)
             particles.append(Particle(
                 startPosition: point,
                 velocity: CGVector(dx: cos(angle) * speed, dy: sin(angle) * speed),
                 birthTime: time,
-                lifetime: .random(in: 1.0...2.0),
-                radius: .random(in: 3...6),
+                lifetime: .random(in: 0.6...1.4),
+                radius: .random(in: 2...5),
                 color: palette.colors.randomElement() ?? .white,
-                gravity: 150
+                gravity: 200
             ))
         }
         removeExpired(at: time)
     }
 
+    // Remove every particle at once
     mutating func clear() {
         particles.removeAll()
     }
