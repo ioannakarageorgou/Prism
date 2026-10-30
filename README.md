@@ -1,4 +1,4 @@
-# Prism ✨
+# Prism 🎡
 
 A tiny particle project I built in a day to play with SwiftUI's Canvas API.
 Touch the screen and glowing particles bloom around your finger. Tap for
@@ -9,6 +9,7 @@ a burst. Turn on symmetry and things get unexpectedly pretty.
 ## Demo
 
 https://github.com/user-attachments/assets/caeebf54-67f5-4b52-915b-8c46bc95f3a8
+
 ---
 
 ## What it does
