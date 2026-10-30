@@ -9,13 +9,24 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            Color.black
+
+            Canvas { context, size in
+                let radius: CGFloat = 10
+                let center = CGPoint(x: size.width / 2, y: size.height / 2)
+                let rect = CGRect(
+                    x: center.x - radius,
+                    y: center.y - radius,
+                    width: radius * 2,
+                    height: radius * 2
+                )
+
+                let path = Circle().path(in: rect)
+                context.fill(path, with: .color(.red))
+            }
         }
-        .padding()
+        .ignoresSafeArea()
     }
 }
 
