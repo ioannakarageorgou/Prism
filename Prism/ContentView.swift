@@ -8,49 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var system = ParticleSystem()
+
     var body: some View {
         ZStack {
             Color.black
 
             TimelineView(.animation) { timeline in
-                // TEMP: looping 0–2.5s clock so the demo replays. Replaced by real time once touch creates particles.
                 let now = timeline.date.timeIntervalSinceReferenceDate
-                    .truncatingRemainder(dividingBy: 2.5)
 
-                Canvas {
-                    context,
-                    size in
-                    let center = CGPoint(x: size.width / 2, y: size.height / 2)
-
-                    let particles = [
-                        Particle(
-                            startPosition: center,
-                            velocity: CGVector(dx: 100, dy: 0),
-                            birthTime: 0,
-                            lifetime: 2,
-                            radius: 10,
-                            color: .red
-                        ),
-                        Particle(
-                            startPosition: center,
-                            velocity: CGVector(dx: 0, dy: -100),
-                            birthTime: 0,
-                            lifetime: 2,
-                            radius: 10,
-                            color: .cyan,
-                            gravity: 200
-                        ),
-                        Particle(
-                            startPosition: center,
-                            velocity: CGVector(dx: -80, dy: 80),
-                            birthTime: 0,
-                            lifetime: 2,
-                            radius: 10,
-                            color: .yellow
-                        )
-                    ]
-
-                    for particle in particles where particle.isAlive(at: now) {
+                Canvas { context, size in
+                    for particle in system.particles where particle.isAlive(at: now) {
                         let point = particle.position(at: now)
                         let r = particle.radius
                         let rect = CGRect(x: point.x - r, y: point.y - r, width: r * 2, height: r * 2)
@@ -61,6 +29,18 @@ struct ContentView: View {
             }
         }
         .ignoresSafeArea()
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { value in
+                    system.emitTrail(at: value.location, time: Date.now.timeIntervalSinceReferenceDate)
+                }
+                .onEnded { value in
+                    let distance = hypot(value.translation.width, value.translation.height)
+                    if distance < 10 {
+                        system.burst(at: value.location, time: Date.now.timeIntervalSinceReferenceDate)
+                    }
+                }
+        )
     }
 }
 
