@@ -47,6 +47,10 @@ struct ParticleSystem {
         removeExpired(at: time)
     }
 
+    mutating func clear() {
+        particles.removeAll()
+    }
+
     // Drop dead particles, then keep only the newest maxParticles
     private mutating func removeExpired(at time: TimeInterval) {
         particles.removeAll { !$0.isAlive(at: time) }

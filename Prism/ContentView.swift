@@ -11,6 +11,28 @@ struct ContentView: View {
     @State private var system = ParticleSystem()
 
     var body: some View {
+        ZStack(alignment: .bottom) {
+            particleCanvas
+                .ignoresSafeArea()
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            system.emitTrail(at: value.location, time: Date.now.timeIntervalSinceReferenceDate)
+                        }
+                        .onEnded { value in
+                            let distance = hypot(value.translation.width, value.translation.height)
+                            if distance < 10 {
+                                system.burst(at: value.location, time: Date.now.timeIntervalSinceReferenceDate)
+                            }
+                        }
+                )
+
+            controlBar
+                .padding(.bottom, 8)
+        }
+    }
+
+    private var particleCanvas: some View {
         ZStack {
             Color.black
 
@@ -45,19 +67,46 @@ struct ContentView: View {
                 }
             }
         }
-        .ignoresSafeArea()
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { value in
-                    system.emitTrail(at: value.location, time: Date.now.timeIntervalSinceReferenceDate)
+    }
+
+    private var controlBar: some View {
+        HStack(spacing: 16) {
+            ForEach(Palette.allCases) { palette in
+                Button {
+                    system.palette = palette
+                } label: {
+                    Circle()
+                        .fill(LinearGradient(colors: palette.colors, startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 32, height: 32)
+                        .padding(4)
+                        .overlay {
+                            Circle()
+                                .strokeBorder(.white, lineWidth: 2)
+                                .opacity(system.palette == palette ? 1 : 0)
+                        }
                 }
-                .onEnded { value in
-                    let distance = hypot(value.translation.width, value.translation.height)
-                    if distance < 10 {
-                        system.burst(at: value.location, time: Date.now.timeIntervalSinceReferenceDate)
-                    }
-                }
-        )
+                .accessibilityLabel(palette.rawValue.capitalized)
+                .accessibilityAddTraits(system.palette == palette ? .isSelected : [])
+            }
+
+            Divider()
+                .frame(height: 28)
+
+            Button {
+                system.clear()
+            } label: {
+                Image(systemName: "trash")
+                    .font(.title3)
+                    .foregroundStyle(.white)
+                    .frame(width: 40, height: 40)
+            }
+            .accessibilityLabel("Clear")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .glassEffect()
+        .animation(.snappy, value: system.palette)
+        .sensoryFeedback(.selection, trigger: system.palette)
     }
 
     // A circle path centered on a point
