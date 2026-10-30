@@ -18,12 +18,29 @@ struct ContentView: View {
                 let now = timeline.date.timeIntervalSinceReferenceDate
 
                 Canvas { context, size in
+                    context.blendMode = .plusLighter
+
                     for particle in system.particles where particle.isAlive(at: now) {
                         let point = particle.position(at: now)
-                        let r = particle.radius
-                        let rect = CGRect(x: point.x - r, y: point.y - r, width: r * 2, height: r * 2)
-                        let color = particle.color.opacity(particle.opacity(at: now))
-                        context.fill(Circle().path(in: rect), with: .color(color))
+                        let alpha = particle.opacity(at: now)
+                        let glowRadius = particle.radius * 4
+
+                        // Soft halo: particle color in the center, fading to transparent at the edge
+                        context.fill(
+                            dot(at: point, radius: glowRadius),
+                            with: .radialGradient(
+                                Gradient(colors: [particle.color.opacity(alpha * 0.5), particle.color.opacity(0)]),
+                                center: point,
+                                startRadius: 0,
+                                endRadius: glowRadius
+                            )
+                        )
+
+                        // Bright core
+                        context.fill(
+                            dot(at: point, radius: particle.radius),
+                            with: .color(particle.color.opacity(alpha))
+                        )
                     }
                 }
             }
@@ -41,6 +58,16 @@ struct ContentView: View {
                     }
                 }
         )
+    }
+
+    // A circle path centered on a point
+    private func dot(at center: CGPoint, radius: CGFloat) -> Path {
+        Circle().path(in: CGRect(
+            x: center.x - radius,
+            y: center.y - radius,
+            width: radius * 2,
+            height: radius * 2
+        ))
     }
 }
 

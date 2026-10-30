@@ -11,7 +11,7 @@ struct ParticleSystem {
     private(set) var particles: [Particle] = []
 
     private let maxParticles = 1000
-    private let colors: [Color] = [.red, .cyan, .yellow]
+    var palette: Palette = .neon
 
     // A few slow particles drifting away from the finger
     mutating func emitTrail(at point: CGPoint, time: TimeInterval) {
@@ -22,7 +22,7 @@ struct ParticleSystem {
                 birthTime: time,
                 lifetime: .random(in: 0.8...1.6),
                 radius: .random(in: 2...5),
-                color: colors.randomElement() ?? .white,
+                color: palette.colors.randomElement() ?? .white,
                 gravity: 40
             ))
         }
@@ -40,7 +40,7 @@ struct ParticleSystem {
                 birthTime: time,
                 lifetime: .random(in: 1.0...2.0),
                 radius: .random(in: 3...6),
-                color: colors.randomElement() ?? .white,
+                color: palette.colors.randomElement() ?? .white,
                 gravity: 150
             ))
         }
