@@ -17,7 +17,7 @@ struct ContentView: View {
                 size in
                 let center = CGPoint(x: size.width / 2, y: size.height / 2)
                 let now: TimeInterval = 0.5
-                
+
                 let particles = [
                     Particle(
                         startPosition: center,
