@@ -14,6 +14,8 @@ struct Particle {
     var lifetime: TimeInterval
     var radius: CGFloat
     var color: Color
+    // Downward pull in points/second² (screen y grows downward, so positive = falls)
+    var gravity: CGFloat = 0
 
     // now − birthTime
     func age(at time: TimeInterval) -> TimeInterval {
@@ -38,11 +40,12 @@ struct Particle {
     }
 
     // position = start + speed × time
+    // y also gets + ½ × gravity × time², which makes the fall speed up (an arc, not a line)
     func position(at time: TimeInterval) -> CGPoint {
         let age = self.age(at: time)
         return CGPoint(
             x: startPosition.x + velocity.dx * age,
-            y: startPosition.y + velocity.dy * age
+            y: startPosition.y + velocity.dy * age + 0.5 * gravity * age * age
         )
     }
 }
